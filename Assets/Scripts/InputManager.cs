@@ -8,7 +8,9 @@ public class InputManager : MonoBehaviour
     [SerializeField]
     private FishMachine fishMachine;
     [SerializeField]
-    private OSC oscServer;
+    private OSC twitterOsc;
+    [SerializeField]
+    private OSC leapOsc;
 
     /* MEMBER VARIABLES */
     private readonly Dictionary<KeyCode, FishMachine.Interaction> controls;
@@ -27,8 +29,12 @@ public class InputManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        oscServer.SetAddressHandler("/feedfish", OnFeedFish);
-        oscServer.SetAddressHandler("/petfish", OnPetFish);
+        twitterOsc.SetAddressHandler("/feedfish", OnFeedFish);
+        twitterOsc.SetAddressHandler("/petfish", OnPetFish);
+
+        leapOsc.SetAddressHandler("/Sprinkle_food", OnSprinkle);
+        leapOsc.SetAddressHandler("/Get_attention", OnGetAttention);
+        leapOsc.SetAddressHandler("/Finger_point", OnPointing);
 
         //If our fish machine was not specified in the Unity Editor, throw an informative exception now :)
         if(fishMachine == null)
@@ -66,5 +72,23 @@ public class InputManager : MonoBehaviour
     {
         Debug.Log($"PetFish: {message.ToString()}");
         fishMachine.Interact(FishMachine.Interaction.TWEETPET);
+    }
+
+    void OnSprinkle(OscMessage message)
+    {
+        Debug.Log($"Sprinkle: {message.ToString()}");
+        fishMachine.Interact(FishMachine.Interaction.SPRINKLING);
+    }
+
+    void OnGetAttention(OscMessage message)
+    {
+        Debug.Log($"Get Attention: {message.ToString()}");
+        fishMachine.Interact(FishMachine.Interaction.TRACKING);
+    }
+
+    void OnPointing(OscMessage message)
+    {
+        Debug.Log($"Finger Point: {message.ToString()}");
+        fishMachine.Interact(FishMachine.Interaction.POINTING);
     }
 }

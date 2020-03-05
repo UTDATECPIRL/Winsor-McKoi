@@ -2986,7 +2986,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fishMachine: {fileID: 576470952}
-  oscServer: {fileID: 1907806315}
+  twitterOsc: {fileID: 1907806315}
+  leapOsc: {fileID: 1701229721}
 --- !u!4 &1565725603
 Transform:
   m_ObjectHideFlags: 0
@@ -3313,7 +3314,7 @@ GameObject:
   - component: {fileID: 1701229722}
   - component: {fileID: 1701229721}
   m_Layer: 0
-  m_Name: GameObject
+  m_Name: Leap OSC
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3607,7 +3608,7 @@ GameObject:
   - component: {fileID: 1907806314}
   - component: {fileID: 1907806315}
   m_Layer: 0
-  m_Name: OSC
+  m_Name: Twitter OSC
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
