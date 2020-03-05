@@ -13,6 +13,8 @@ public class FishGuiScript : MonoBehaviour
     private VideoClip[] videoClips;
     [SerializeField]
     private GameObject[] animations;
+    [SerializeField]
+    private OSC leapOSC;    
 
     /* MEMBER VARIABLES */
     private VideoPlayer videoPlayer;

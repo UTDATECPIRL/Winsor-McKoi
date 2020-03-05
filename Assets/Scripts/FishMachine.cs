@@ -139,6 +139,10 @@ public class FishMachine : MonoBehaviour
         Debug.Log(CurrentState);
     }
 
+    /*
+     TODO: FSM must understand video/animation state
+            Immediate Response
+     */
     // Update is called once per frame
     void Update()
     {
