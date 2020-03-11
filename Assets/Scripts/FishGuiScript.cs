@@ -53,38 +53,21 @@ public class FishGuiScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //If the fish's state has changed, then add this new state to the queue
-        if(currState != fishMachine.CurrentState)
+        //If the fish changes state
+        if (currState != fishMachine.CurrentState)
         {
-            currState = fishMachine.CurrentState;
-            stateQueue.Enqueue(currState);
-        }
+            //Disable the current animation object
+            playingAnimation.SetActive(false);
 
-        //If video is done playing (indicated by videoPlayer not playing AND we didnt JUST try to start it)
-        if (playingAnimation.GetComponent<PlayableDirector>().state == PlayState.Paused && !justSwitched)
-        {
-            //If there are any states in the queue, load them as the next video
-            if (stateQueue.Count > 0)
-            {
-                playingAnimation.SetActive(false);
-                playingAnimation = animations[(int)stateQueue.Dequeue()];
-            }
-            else
-                playingAnimation = animations[(int)fishMachine.CurrentState]; //If no new states, just loop the current state
-
-            //playingAnimation.GetComponent<PlayableDirector>()= 1.0f;   //reset the playback speed
+            //Pick the new animation, activate it, then play it
+            playingAnimation = animations[(int)fishMachine.CurrentState];
             playingAnimation.SetActive(true);
             playingAnimation.GetComponent<PlayableDirector>().Play();
-            justSwitched = true; //set our flag
-        }
-        if (justSwitched && playingAnimation.GetComponent<PlayableDirector>().state == PlayState.Playing)
-            justSwitched = false; //reset our flag
 
-        //If the video is playing BUT there is something queued up
-        if (videoPlayer.isPlaying && !justSwitched && stateQueue.Count > 0)
-        {
-            videoPlayer.playbackSpeed = 2.0f; //speed that RILED MFER up
+            //Set the current state
+            currState = fishMachine.CurrentState;
         }
+        
     }
 
     void OnGUI()

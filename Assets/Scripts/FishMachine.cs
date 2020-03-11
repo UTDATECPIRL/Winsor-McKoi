@@ -80,8 +80,8 @@ public class FishMachine : MonoBehaviour
     void Start()
     {
         CurrentState = State.STANDING; //Start the fish folded up
-        happiness = happyThreshold;
-        fullness = fullThreshold;
+        happiness = 0.5f;
+        fullness = 0.5f;
         inputThisFrame = new List<Interaction>();
         decayTimer = Time.time;
 
