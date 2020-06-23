@@ -6,13 +6,13 @@ public struct Transition
     public readonly FishMachine.State From;
     public readonly FishMachine.State To;
     public readonly FishMachine.Interaction By;
-    public readonly float Time; //Time should only have a non-negative value if this is a transition by time
+    public readonly float Time; //Time should only have a positive value if the transition is triggered by time
     public readonly FishCondition Condition;
 
   /// <summary>
   /// This struct is a record containing all information related to a state transition in FishMachine.
-  /// Given a current state, and inputs (including time spent in current state), a fishmachine should only need a Transition to determine
-  /// if it should make a given transition
+  /// Given a current state, and inputs (including time spent in current state), a fishmachine should only need a Transition object to determine
+  /// if it should transition to another state
   /// </summary>
   /// <param name="from">The state the machine is transitioning from</param>
   /// <param name="to">The state the machine is transitioning to</param>

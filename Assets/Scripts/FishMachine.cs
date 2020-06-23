@@ -6,10 +6,47 @@ using UnityEngine;
 public class FishMachine : MonoBehaviour
 {
     /* UNITY INSPECTOR VARIABLES */
+    /// <summary>
+    /// The happiness level at which the fish will be considered happy
+    /// </summary>
+    [Range(0.0f, 1.0f)]
     public float happyThreshold;
+    /// <summary>
+    /// The fullness level below which the fish will be considered starving. Should be less than fullThreshold
+    /// </summary>
+    [Range(0.0f, 1.0f)]
+    public float starvingThreshold;
+    /// <summary>
+    /// The fullness level past which the fish will be considered full. Should be between starvingThreshold and overfullThreshold
+    /// </summary>
+    [Range(0.0f, 1.0f)]
     public float fullThreshold;
+    /// <summary>
+    /// The fullness level past which the fish will be considered overfed. Should be greater than fullThreshold
+    /// </summary>
+    [Range(0.0f, 1.0f)]
+    public float overfullThreshold;
+    /// <summary>
+    /// The amount of time it takes for the fish to fully drain from 100% happiness/fullness
+    /// </summary>
+    [Range(0.0f, 10.0f * 60.0f)]
     public float decayTime;
-    
+    /// <summary>
+    /// The number of seconds the "feeding window" will be open, such that 3 sprinkles in this window fully feeds the fish
+    /// </summary>
+    [Range(0.0f, 2.0f * 60.0f)]
+    public float feedingWindow;
+    /// <summary>
+    /// The happiness level the fish will wake up at
+    /// </summary>
+    [Range(0.0f, 1.0f)]
+    public float initialHappiness;
+    /// <summary>
+    /// The fullness level the fish will wake up at
+    /// </summary>
+    [Range(0.0f, 1.0f)]
+    public float initialFullness;
+
     /* PROPERTIES */
     ///The current state of the machine
     public State CurrentState { get; private set; }
@@ -36,8 +73,29 @@ public class FishMachine : MonoBehaviour
     /// </summary>
     public FishCondition CurrentCondition
     {
-        get => (IsHappy ? FishCondition.HAPPY : FishCondition.SAD) | 
-            (IsFull ? FishCondition.FULL : FishCondition.HUNGRY);
+        get
+        {
+            //The condition variable we will return
+            FishCondition cond = FishCondition.NONE;
+
+            //Are we past the overfeeding point?
+            if (fullness >= overfullThreshold)
+                cond |= FishCondition.OVERFULL;
+            //If not, then are we past the full point?
+            else if (fullness >= fullThreshold)
+                cond |= FishCondition.FULL;
+            //If not, then is the fish above starving?
+            else if (fullness >= starvingThreshold)
+                cond |= FishCondition.NONE;
+            //If not, then the fish is starving :(
+            else
+                cond |= FishCondition.STARVING;
+
+            //Then just check if the fish is happy or not
+            cond |= (happiness >= happyThreshold) ? FishCondition.HAPPY : FishCondition.SAD;
+
+            return cond;
+        }
     }
 
     /* MEMBER VARIABLES */
@@ -75,15 +133,29 @@ public class FishMachine : MonoBehaviour
     /// </summary>
     private float decayTimer;
 
+    /// <summary>
+    /// The start time of the "feeding window" timer. Resets when a new feeding window opens
+    /// </summary>
+    private float feedingTimer;
+
+    /// <summary>
+    /// The amount by which the fullness level raises when fed. Resets at the beginning of each feeding window
+    /// </summary>
+    private float feedingIncrement;
+
     /* METHODS */
     // Start is called before the first frame update
     void Start()
     {
         CurrentState = State.STANDING; //Start the fish folded up
-        happiness = 0.5f;
-        fullness = 0.5f;
+        
+        //Initialize member variables
+        happiness = initialHappiness;
+        fullness = initialFullness;
         inputThisFrame = new List<Interaction>();
-        decayTimer = Time.time;
+        decayTimer = float.MaxValue;
+        feedingTimer = float.MaxValue;
+        feedingIncrement = 0.0f;
 
         //Create an array with all the transitions, then convert it to an easier-to-use dictionary
         List<Transition> tempTransitionList = new List<Transition>
@@ -95,24 +167,50 @@ public class FishMachine : MonoBehaviour
             new Transition(State.IDLE, State.FEEDING, Interaction.SPRINKLING),
             new Transition(State.IDLE, State.FEEDING, Interaction.TWEETFEED),
             new Transition(State.IDLE, State.SHY, Interaction.POINTING, condition: FishCondition.SAD),
-            new Transition(State.IDLE, State.IDLE2CURIOUS, Interaction.POINTING, condition: FishCondition.HAPPY),
-            new Transition(State.IDLE, State.DYING, Interaction.TIME, 30.0f, FishCondition.HUNGRY),
+            new Transition(State.IDLE, State.IDLE2CURIOUS, Interaction.POINTING, condition: FishCondition.HAPPY | FishCondition.FULL),
+            new Transition(State.IDLE, State.DYING, Interaction.TIME, condition: FishCondition.STARVING),
             new Transition(State.IDLE, State.IDLE2HAPPY, Interaction.TWEETPET),
 
             new Transition(State.IDLE2CURIOUS, State.CURIOUS, Interaction.TIME, 2.0f),
+            new Transition(State.IDLE2CURIOUS, State.SHY, Interaction.POINTING, condition: FishCondition.SAD),
+            new Transition(State.IDLE2CURIOUS, State.FEEDING, Interaction.SPRINKLING),
+            new Transition(State.IDLE2CURIOUS, State.FEEDING, Interaction.TWEETFEED),
 
             new Transition(State.IDLE2HAPPY, State.HAPPY, Interaction.TIME, 2.0f),
+            new Transition(State.IDLE2HAPPY, State.SHY, Interaction.POINTING, condition: FishCondition.SAD),
+            new Transition(State.IDLE2HAPPY, State.IDLE2CURIOUS, Interaction.POINTING, condition: FishCondition.HAPPY),
+            new Transition(State.IDLE2HAPPY, State.FEEDING, Interaction.SPRINKLING),
+            new Transition(State.IDLE2HAPPY, State.FEEDING, Interaction.TWEETFEED),
 
+            new Transition(State.FEEDING, State.HAPPY, Interaction.TIME, 8.0f, FishCondition.STARVING),
             new Transition(State.FEEDING, State.HAPPY, Interaction.TIME, 8.0f, FishCondition.HUNGRY),
             new Transition(State.FEEDING, State.SAD, Interaction.TIME, 8.0f, FishCondition.FULL),
+            new Transition(State.FEEDING, State.SAD, Interaction.TIME, 8.0f, FishCondition.OVERFULL),
+            new Transition(State.FEEDING, State.SHY, Interaction.POINTING, condition: FishCondition.SAD),
+            new Transition(State.FEEDING, State.IDLE2CURIOUS, Interaction.POINTING, condition: FishCondition.HAPPY),
 
             new Transition(State.SHY, State.IDLE, Interaction.TIME, 7.0f),
+            new Transition(State.SHY, State.IDLE2CURIOUS, Interaction.POINTING, condition: FishCondition.HAPPY),
+            new Transition(State.SHY, State.FEEDING, Interaction.SPRINKLING),
+            new Transition(State.SHY, State.FEEDING, Interaction.TWEETFEED),
 
             new Transition(State.CURIOUS, State.IDLE, Interaction.TIME, 45.0f),
+            new Transition(State.CURIOUS, State.SHY, Interaction.POINTING, condition: FishCondition.SAD),
+            new Transition(State.CURIOUS, State.IDLE2CURIOUS, Interaction.POINTING, condition: FishCondition.HAPPY),
+            new Transition(State.CURIOUS, State.FEEDING, Interaction.SPRINKLING),
+            new Transition(State.CURIOUS, State.FEEDING, Interaction.TWEETFEED),
 
             new Transition(State.HAPPY, State.IDLE, Interaction.TIME, 8.0f),
+            new Transition(State.HAPPY, State.SHY, Interaction.POINTING, condition: FishCondition.SAD),
+            new Transition(State.HAPPY, State.IDLE2CURIOUS, Interaction.POINTING, condition: FishCondition.HAPPY),
+            new Transition(State.HAPPY, State.FEEDING, Interaction.SPRINKLING),
+            new Transition(State.HAPPY, State.FEEDING, Interaction.TWEETFEED),
 
             new Transition(State.SAD, State.IDLE, Interaction.TIME, 7.0f),
+            new Transition(State.SAD, State.SHY, Interaction.POINTING, condition: FishCondition.SAD),
+            new Transition(State.SAD, State.IDLE2CURIOUS, Interaction.POINTING, condition: FishCondition.HAPPY),
+            new Transition(State.SAD, State.FEEDING, Interaction.SPRINKLING),
+            new Transition(State.SAD, State.FEEDING, Interaction.TWEETFEED),
 
             new Transition(State.DYING, State.STANDING, Interaction.TIME, 3.0f)
         };
@@ -146,12 +244,22 @@ public class FishMachine : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(Time.time - decayTimer >= decayTime)
+        //We divide decay time by 10 because we want 10 decays to happen, and we multiply by 60
+        //because decayTime is in minutes, not seconds.
+        if(Time.time - decayTimer >= 60.0 * decayTime / 10.0f)
         {
             happiness -= 0.1f;
             fullness -= 0.1f;
             decayTimer = Time.time;
         }
+
+        //If the feeding timer passes the end of the feeding window, close the feeding window
+        if (Time.time - feedingTimer > feedingWindow)
+        {
+            feedingTimer = float.MaxValue;
+            feedingIncrement = 0.0f;
+        }
+
         //Loop through all transitions FROM this state and check whether we should transition
         foreach(Transition t in transitions[CurrentState])
         {
@@ -245,9 +353,22 @@ public class FishMachine : MonoBehaviour
         {
             //Eating makes the fish fuller, and if the fish is not overfull, then it will make the fish happier
             case State.FEEDING:
-                fullness += 0.2f;
-                if (fullness > 1.0f) //TODO: Create a variable for the overfull threshold?
-                    happiness -= 0.1f;
+                if (feedingTimer == float.MaxValue)
+                {
+                    //Since fish should be fully fed after 3 sprinkles, take the remaining hunger and divide by 3
+                    feedingIncrement = (1.0f - fullness) / 3.0f;
+
+                    //Add the food to the fish's belly
+                    fullness += feedingIncrement;
+
+                    //Open the feeding window!
+                    feedingTimer = Time.time;
+                }
+                else
+                {
+                    //If the timer is running, then just add the food
+                    fullness += feedingIncrement;
+                }
                 break;
             //Being shy makes the fish somewhat happier because of the interaction (someone has to talk to you for you to get shy)
             case State.SHY:
@@ -256,6 +377,17 @@ public class FishMachine : MonoBehaviour
             //Being curious makes the fish more happy than being shy; the fish is engaged by the interaction
             case State.CURIOUS:
                 happiness += 0.3f;
+                break;
+            //When the fish is starting to "hibernate," reset its stats
+            case State.DYING:
+                happiness = initialHappiness;
+                fullness = initialFullness;
+                decayTimer = float.MaxValue; //This is a shifty(?) workaround to get the fish to hibernate; its 
+                                             //stats wont tick down while this is set
+                break;
+          //
+            case State.OPENING:
+                decayTimer = Time.time;
                 break;
         }
     }

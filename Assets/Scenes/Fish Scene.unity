@@ -1290,9 +1290,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 536098cab90fdf64caa8da5e2109db21, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  happyThreshold: 0.3
-  fullThreshold: 0.8
+  happyThreshold: 0.65
+  starvingThreshold: 0.2
+  fullThreshold: 0.5
+  overfullThreshold: 0.8
   decayTime: 20
+  feedingWindow: 20
+  initialHappiness: 0.5
+  initialFullness: 0.5
 --- !u!4 &576470953
 Transform:
   m_ObjectHideFlags: 0

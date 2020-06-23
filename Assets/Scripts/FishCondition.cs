@@ -8,7 +8,7 @@ using System.Threading.Tasks;
  * Creating a compound condition:
  *      ex. FishCondition compound = FishCondition.HAPPY & FishCondition.FULL;
  *      
- * One benefit of this is that we can check any Condition variable to see if any subset of conditions are met
+ * One benefit of this is that we can check any FishCondition variable to see if any subset of conditions are met
  *      ex. 
  *      private bool isHappyHungry(FishCondition con){
  *           FishCondition compare = FishCondition.Happy & FishCondition.HUNGRY;
@@ -31,7 +31,8 @@ public enum FishCondition : uint
     FULL =      0b0000_0100,
     HUNGRY =    0b0000_1000,
     OVERFULL =  0b0001_0000,
-    GLOWING  =  0b0010_0000
+    STARVING =  0b0010_0000,
+    GLOWING  =  0b0100_0000
 }
 
 public static class FishConditionExtensions

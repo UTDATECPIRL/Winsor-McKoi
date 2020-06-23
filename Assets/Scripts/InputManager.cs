@@ -56,10 +56,6 @@ public class InputManager : MonoBehaviour
                 fishMachine.Interact(pair.Value);
             }
         }
-
-        if (Input.GetKeyDown(KeyCode.Space)) {
-                
-        }
     }
 
     void OnFeedFish(OscMessage message)

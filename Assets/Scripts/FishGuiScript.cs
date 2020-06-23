@@ -76,8 +76,8 @@ public class FishGuiScript : MonoBehaviour
     //    GUI.Box(windowRect, "Fish Machine Display");
 
         GUILayout.Label($"Current State: {fishMachine.CurrentState}");
-        GUILayout.Label($"Happiness    : {fishMachine.happiness}");
-        GUILayout.Label($"Fullness     : {fishMachine.fullness}");
+        GUILayout.Label($"Happiness    : {fishMachine.happiness * 100.0f}%");
+        GUILayout.Label($"Fullness     : {fishMachine.fullness * 100.0f}%");
         GUILayout.Label($"Condition    : {fishMachine.CurrentCondition}");
         foreach(FishMachine.State state in stateQueue.ToArray())
         {
