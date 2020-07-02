@@ -6,6 +6,12 @@ using UnityEngine;
 public class FishMachine : MonoBehaviour
 {
     /* UNITY INSPECTOR VARIABLES */
+
+    /// <summary>
+    /// The state the fish starts in
+    /// </summary>
+    public State initialState;
+
     /// <summary>
     /// The happiness level at which the fish will be considered happy
     /// </summary>
@@ -29,13 +35,31 @@ public class FishMachine : MonoBehaviour
     /// <summary>
     /// The amount of time it takes for the fish to fully drain from 100% happiness/fullness
     /// </summary>
+    [Tooltip("Time in minutes it takes for happiness/fullness to drain from 100% to 0%")]
     [Range(0.0f, 10.0f * 60.0f)]
     public float decayTime;
+
+    /// <summary>
+    /// The amount of time in minutes the tank takes to go from 0% dirty to 100% dirty
+    /// </summary>
+    [Tooltip("Time in minutes it takes for the tank to reach 100% dirtiness")]
+    [Range(0.0f, 10.0f * 60.0f)]
+    public float dirtTime;
+
     /// <summary>
     /// The number of seconds the "feeding window" will be open, such that 3 sprinkles in this window fully feeds the fish
     /// </summary>
+    [Tooltip("Length of the window, in seconds, during which 3 sprinkles will completely feed the fish")]
     [Range(0.0f, 2.0f * 60.0f)]
     public float feedingWindow;
+
+    /// <summary>
+    /// The length of the window, in seconds, during which 3 'point' interactions will make Winsor 100% happy
+    /// </summary>
+    [Range(0.0f, 2.0f * 60.0f)]
+    [Tooltip("The length of the window, in seconds, during which 3 'point' interactions will make Winsor 100% happy")]
+    public float pointingWindow;
+
     /// <summary>
     /// The happiness level the fish will wake up at
     /// </summary>
@@ -46,6 +70,12 @@ public class FishMachine : MonoBehaviour
     /// </summary>
     [Range(0.0f, 1.0f)]
     public float initialFullness;
+
+    /// <summary>
+    /// The initial level of dirtiness in the tank. 100% dirtiness is 75% opacity
+    /// </summary>
+    [Range(0.0f, 1.0f)]
+    public float initialDirtiness;
 
     /* PROPERTIES */
     ///The current state of the machine
@@ -75,7 +105,7 @@ public class FishMachine : MonoBehaviour
     {
         get
         {
-            //The condition variable we will return
+            //The condition variable we will return, i.e. Winsor's current condition
             FishCondition cond = FishCondition.NONE;
 
             //Are we past the overfeeding point?
@@ -86,7 +116,7 @@ public class FishMachine : MonoBehaviour
                 cond |= FishCondition.FULL;
             //If not, then is the fish above starving?
             else if (fullness >= starvingThreshold)
-                cond |= FishCondition.NONE;
+                cond |= FishCondition.HUNGRY;
             //If not, then the fish is starving :(
             else
                 cond |= FishCondition.STARVING;
@@ -122,11 +152,22 @@ public class FishMachine : MonoBehaviour
     internal float fullness;
 
     /// <summary>
+    /// A bounded value from 0 to 1 inclusive that represents the tank's dirtiness
+    /// </summary>
+    [Range(0.0f, 1.0f)]
+    internal float dirtiness;
+
+    /// <summary>
     /// When FishMachine.Interact() is called, it sets this variable. In the update loop, the FishMachine will check this variable and 
     /// process the interaction, if applicable.
     /// Note: This does NOT need to be a queue right now because the InputManager can only set this once per update loop
     /// </summary>
     private List<Interaction> inputThisFrame;
+
+    /// <summary>
+    /// A timer so the tank can get progressively more dirty
+    /// </summary>
+    private float dirtTimer;
 
     /// <summary>
     /// The start time of the decay timer, resets with each decay.
@@ -143,31 +184,55 @@ public class FishMachine : MonoBehaviour
     /// </summary>
     private float feedingIncrement;
 
+    /// <summary>
+    /// The timer used for the 3-Pointing system
+    /// </summary>
+    private float pointingTimer;
+
+    /// <summary>
+    /// The value to be added to happiness when pointed at
+    /// </summary>
+    private float pointingIncrement;
+
     /* METHODS */
     // Start is called before the first frame update
     void Start()
     {
         CurrentState = State.STANDING; //Start the fish folded up
         
-        //Initialize member variables
+        //Initialize Winsor's state
         happiness = initialHappiness;
         fullness = initialFullness;
+        dirtiness = initialDirtiness;
+        CurrentState = initialState;
+
+        //Initialize timers and other variables
         inputThisFrame = new List<Interaction>();
+
         decayTimer = float.MaxValue;
         feedingTimer = float.MaxValue;
+        pointingTimer = float.MaxValue;
+        dirtTimer = Time.time;
+
         feedingIncrement = 0.0f;
+        pointingIncrement = 0.0f;
 
         //Create an array with all the transitions, then convert it to an easier-to-use dictionary
         List<Transition> tempTransitionList = new List<Transition>
         {
+            //This is all of the state transitions for the Fish Finite-State Machine
+            //Each transition has a From and To state, as well as the interaction that causes the transition
+            //Conditionals, such as a required FishCondition or an amount of time to pass, can be specified as well
             new Transition(State.STANDING, State.OPENING, Interaction.TRACKING),
 
-            new Transition(State.OPENING, State.IDLE, Interaction.TIME, 11.0f),
+            //NOTE: Many, if not all, of the TIME interactions wait for the animation to end. Thus, the time values are hard-coded
+            //right now to fit the length of the animation
+            new Transition(State.OPENING, State.IDLE, Interaction.TIME, 5.0f),
 
             new Transition(State.IDLE, State.FEEDING, Interaction.SPRINKLING),
             new Transition(State.IDLE, State.FEEDING, Interaction.TWEETFEED),
             new Transition(State.IDLE, State.SHY, Interaction.POINTING, condition: FishCondition.SAD),
-            new Transition(State.IDLE, State.IDLE2CURIOUS, Interaction.POINTING, condition: FishCondition.HAPPY | FishCondition.FULL),
+            new Transition(State.IDLE, State.IDLE2CURIOUS, Interaction.POINTING, condition: FishCondition.HAPPY),
             new Transition(State.IDLE, State.DYING, Interaction.TIME, condition: FishCondition.STARVING),
             new Transition(State.IDLE, State.IDLE2HAPPY, Interaction.TWEETPET),
 
@@ -244,8 +309,8 @@ public class FishMachine : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //We divide decay time by 10 because we want 10 decays to happen, and we multiply by 60
-        //because decayTime is in minutes, not seconds.
+        //We divide decay time by 10 because we want 10 decays to happen w/ no interaction, and we multiply by 60
+        //because decayTime is in minutes, not seconds like Time.time
         if(Time.time - decayTimer >= 60.0 * decayTime / 10.0f)
         {
             happiness -= 0.1f;
@@ -253,8 +318,20 @@ public class FishMachine : MonoBehaviour
             decayTimer = Time.time;
         }
 
+        //Same sh*t different line
+        if (dirtiness < 1.0f && Time.time - dirtTimer >= 60.0f * dirtTime / 10.0f)
+        {
+            dirtiness += 0.1f;
+        }
+
         //If the feeding timer passes the end of the feeding window, close the feeding window
         if (Time.time - feedingTimer > feedingWindow)
+        {
+            feedingTimer = float.MaxValue;
+            feedingIncrement = 0.0f;
+        }
+
+        if (Time.time - pointingTimer > pointingWindow)
         {
             feedingTimer = float.MaxValue;
             feedingIncrement = 0.0f;
@@ -271,7 +348,6 @@ public class FishMachine : MonoBehaviour
                 {
                     //then set it
                     timerStartTime = Time.time;
-                    Debug.Log($"Starting timer, waiting for {t.Time} seconds");
                 }
                 //If the time elapsed is less than the required wait time
                 else if(Time.time - timerStartTime < t.Time) 
@@ -298,13 +374,17 @@ public class FishMachine : MonoBehaviour
                 foreach(Interaction interaction in inputThisFrame)
                 {
                     //Check to see if each input causes a state transition
-                    if(interaction == t.By)
+                    if (interaction == t.By)
                     {
                         //If so, then transition to the next state
                         ChangeState(t.To);
 
                         //And move to the next frame
                         break;
+                    }
+                    else if (interaction == Interaction.WAVE)
+                    {
+                        dirtiness -= 0.2f;
                     }
                 }
             }
@@ -364,19 +444,34 @@ public class FishMachine : MonoBehaviour
                     //Open the feeding window!
                     feedingTimer = Time.time;
                 }
-                else
+                else if (fullness < 1.0f)
                 {
                     //If the timer is running, then just add the food
                     fullness += feedingIncrement;
                 }
                 break;
-            //Being shy makes the fish somewhat happier because of the interaction (someone has to talk to you for you to get shy)
+            //Being pointed at makes the fish either shy or curious. Handle that by...
             case State.SHY:
-                happiness += 0.2f;
-                break;
-            //Being curious makes the fish more happy than being shy; the fish is engaged by the interaction
             case State.CURIOUS:
-                happiness += 0.3f;
+                if(pointingTimer == float.MaxValue) //If the timer is STOPPED
+                {
+                    //...starting the timer...
+                    pointingTimer = Time.time;
+                    pointingIncrement = (1.0f - happiness) / 3.0f;
+
+                    //...making Winsor happier and...
+                    happiness += pointingIncrement;
+
+                    //...expending a little energy
+                    fullness -= 0.1f;
+                }
+                else if(happiness < 1.0f) //if the timer is running...
+                {
+                    //Just do the stat changes
+                    happiness += pointingIncrement;
+                    fullness -= 0.1f;
+                }
+                
                 break;
             //When the fish is starting to "hibernate," reset its stats
             case State.DYING:
@@ -419,6 +514,7 @@ public class FishMachine : MonoBehaviour
         TRACKING,
         POINTING,
         SPRINKLING,
+        WAVE,
         TIME,
         TWEETFEED,
         TWEETPET,

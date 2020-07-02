@@ -22,7 +22,8 @@ public class InputManager : MonoBehaviour
         {
             { KeyCode.S, FishMachine.Interaction.SPRINKLING },
             { KeyCode.P, FishMachine.Interaction.POINTING },
-            { KeyCode.T, FishMachine.Interaction.TRACKING }
+            { KeyCode.T, FishMachine.Interaction.TRACKING },
+            { KeyCode.W, FishMachine.Interaction.WAVE}
         };
     }
 
@@ -33,8 +34,10 @@ public class InputManager : MonoBehaviour
         twitterOsc.SetAddressHandler("/petfish", OnPetFish);
 
         leapOsc.SetAddressHandler("/Sprinkle_food", OnSprinkle);
-        leapOsc.SetAddressHandler("/Get_attention", OnGetAttention);
+        //Deprecated leapOsc.SetAddressHandler("/Get_attention", OnGetAttention);
         leapOsc.SetAddressHandler("/Finger_point", OnPointing);
+        leapOsc.SetAddressHandler("/Cleaning_wave", OnWave);
+
 
         //If our fish machine was not specified in the Unity Editor, throw an informative exception now :)
         if(fishMachine == null)
@@ -86,5 +89,10 @@ public class InputManager : MonoBehaviour
     {
         Debug.Log($"Finger Point: {message.ToString()}");
         fishMachine.Interact(FishMachine.Interaction.POINTING);
+    }
+
+    void OnWave(OscMessage message)
+    {
+        Debug.Log($"Wave: {message.ToString()}");
     }
 }

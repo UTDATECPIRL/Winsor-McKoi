@@ -255,6 +255,7 @@
     <Compile Include="Assets\Scripts\InputManager.cs" />
     <Compile Include="Assets\Scripts\LEAP_coordinates.cs" />
     <Compile Include="Assets\Scripts\OSC.cs" />
+    <Compile Include="Assets\Scripts\Presence.cs" />
     <Compile Include="Assets\Scripts\Transition.cs" />
     <None Include="Assets\LeapMotion\Core\Version.txt" />
     <None Include="Assets\LeapMotion\Core\Shaders\RuntimeGizmos.shader" />
