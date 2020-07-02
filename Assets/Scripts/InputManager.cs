@@ -94,5 +94,6 @@ public class InputManager : MonoBehaviour
     void OnWave(OscMessage message)
     {
         Debug.Log($"Wave: {message.ToString()}");
+        fishMachine.Interact(FishMachine.Interaction.WAVE);
     }
 }

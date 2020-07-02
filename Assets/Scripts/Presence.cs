@@ -7,7 +7,7 @@ public class Presence : MonoBehaviour
 {
     //Setup parameters to connect to Arduino
 
-    public static SerialPort sp = new SerialPort("/dev/cu.usbmodem14101");
+    public static SerialPort sp = new SerialPort("COM3");
     private int message2;
     public int det_thres;
     public FishMachine fishMachine;
