@@ -1,6 +1,6 @@
 # Winsor McKoi 
 
-Interactive Fish Project
+Winsor McKoi Interactive Fish Project is an experiment in delight and engagement. Using Leap Motion Controller and Ultrasonic Sensor as well as a Looking Glass holographic display, the window-front installation presents an animated origami fish, named Winsor McKoi. The virtual fish responds in real-time to physical presence and gestures (e.g., sprinkle, wave, and point) as well as tweets in order to cultivate a community of participants who actively engage in maintaining the “life” of the virtual fish over time. In doing so, Winsor McKoi Interactive Fish Project imagines that post-COVID-19 interfaces might be “touching” in ways that do not require fingers.
 
 ## Getting Started
 
