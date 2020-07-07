@@ -9,7 +9,7 @@ These instructions will get you a copy of the project up and running on your loc
 ### Prerequisites 
 
 * Windows 10 or macOS(The COM port in the Presence GameObject would need to be modified accordingly)
-* [Leap Motion Sensor](https://www.ultraleap.com/product/leap-motion-controller/)
+* [Leap Motion Controller](https://www.ultraleap.com/product/leap-motion-controller/)
 * Arduino Uno and HR-SC04 Ultrasonic Sensor
 
 ### Installation
@@ -18,12 +18,12 @@ Clone this repository or download the zip.
 https://github.com/UTDATECPIRL/Winsor-McKoi.git
 ```
 #### Unity Component
-The UI for the installation is built in Unity. The leap motion package for unity is used to extract the hand tracking data from the leap motion sensor. 
+The UI for the installation is built in Unity. The leap motion package for unity is used to extract the hand tracking data from the leap motion controller. 
 * Install [Unity](https://store.unity.com/#plans-individual)
 * Install [Leap Motion for Unity](https://developer.leapmotion.com/unity#5436356) 
 
 #### Machine Learning Component
-The Ml model takes the finger coordinates from the leap motion sensor as input. A DTW algorithm is used to perform time series analysis on the incoming temporal sequence. The similarity percentage thus obtained is used to decide which gesture is being performed by the user in real time.   
+The Ml model takes the finger coordinates from the leap motion controller as input. A DTW algorithm is used to perform time series analysis on the incoming temporal sequence. The similarity percentage thus obtained is used to decide which gesture is being performed by the user in real time.   
 * Install [Wekinator](http://www.wekinator.org/downloads/)
 
 #### Presence Detection Component:
