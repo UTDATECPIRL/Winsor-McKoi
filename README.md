@@ -36,7 +36,7 @@ We are using an Arduino Uno with an ultrasonic sensor to detect physical presenc
 
 ## Running the application
 
-* Open the .wekproj file in the folder (Winsor-McKoi/ML_Component) from inside the wekinator application and click run
+* Open the .wekproj file in the folder (Winsor-McKoi/ML_Component) from within the wekinator application and click run.
 * Run the Unity application in the folder (Winsor-McKoi/Build). Follow the guide below to explore the fish's behaviours. 
 
 ### Demo Guide:
