@@ -21,9 +21,6 @@ ScriptsOnlyBuild:
     - UnityEngine.Formats.Alembic.Timeline.AlembicTrack
     Unity.Rider.Editor.dll:
     - Packages.Rider.Editor.UnitTesting.CallbackData
-    Unity.Timeline.Editor.dll:
-    - UnityEditor.Timeline.SequenceHierarchy
-    - UnityEditor.Timeline.TimelineWindow
     Unity.Timeline.dll:
     - UnityEngine.Timeline.AnimationTrack
     - UnityEngine.Timeline.TimelineAsset
@@ -74,53 +71,53 @@ ScriptsOnlyBuild:
     - Class: 109
       Script: {instanceID: 0}
     - Class: 114
-      Script: {instanceID: 11322}
+      Script: {instanceID: 14270}
     - Class: 114
-      Script: {instanceID: 11332}
+      Script: {instanceID: 14280}
     - Class: 114
-      Script: {instanceID: 11428}
+      Script: {instanceID: 14374}
     - Class: 114
-      Script: {instanceID: 11522}
+      Script: {instanceID: 14470}
     - Class: 114
-      Script: {instanceID: 11768}
+      Script: {instanceID: 14712}
     - Class: 114
-      Script: {instanceID: 11796}
+      Script: {instanceID: 14740}
     - Class: 114
-      Script: {instanceID: 11798}
+      Script: {instanceID: 14742}
     - Class: 114
-      Script: {instanceID: 11914}
+      Script: {instanceID: 14858}
     - Class: 114
-      Script: {instanceID: 12076}
+      Script: {instanceID: 15020}
     - Class: 114
-      Script: {instanceID: 12354}
+      Script: {instanceID: 15298}
     - Class: 114
-      Script: {instanceID: 12424}
+      Script: {instanceID: 15368}
     - Class: 114
-      Script: {instanceID: 12440}
+      Script: {instanceID: 15384}
     - Class: 114
-      Script: {instanceID: 12546}
+      Script: {instanceID: 15490}
     - Class: 114
-      Script: {instanceID: 12628}
+      Script: {instanceID: 15572}
     - Class: 114
-      Script: {instanceID: 12722}
+      Script: {instanceID: 15666}
     - Class: 114
-      Script: {instanceID: 12960}
+      Script: {instanceID: 15902}
     - Class: 114
-      Script: {instanceID: 12972}
+      Script: {instanceID: 15916}
     - Class: 114
-      Script: {instanceID: 12986}
+      Script: {instanceID: 16122}
     - Class: 114
-      Script: {instanceID: 13196}
+      Script: {instanceID: 16166}
     - Class: 114
-      Script: {instanceID: 13240}
+      Script: {instanceID: 16288}
     - Class: 114
-      Script: {instanceID: 13362}
+      Script: {instanceID: 16314}
     - Class: 114
-      Script: {instanceID: 13390}
+      Script: {instanceID: 16564}
     - Class: 114
-      Script: {instanceID: 13646}
+      Script: {instanceID: 16632}
     - Class: 114
-      Script: {instanceID: 13712}
+      Script: {instanceID: 22110}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 136
@@ -210,6 +207,12 @@ ScriptsOnlyBuild:
     assemblyName: Unity.TextMeshPro.dll
     namespaceName: TMPro
     className: TMP_ScrollbarEventHandler
+  - hash:
+      serializedVersion: 2
+      Hash: 71bb6a6b6c8f052f948db64c7dd3ca4f
+    assemblyName: UnityEngine.TestRunner.dll
+    namespaceName: UnityEngine.TestTools.TestRunner.Callbacks
+    className: PlayerQuitHandler
   - hash:
       serializedVersion: 2
       Hash: 477e0cfb9c0ba2eae691de22252b435e
@@ -692,12 +695,6 @@ ScriptsOnlyBuild:
     className: Physics2DRaycaster
   - hash:
       serializedVersion: 2
-      Hash: 82e45055aaec29ca261be2e16d590bbd
-    assemblyName: Assembly-CSharp.dll
-    namespaceName: 
-    className: FishMachine
-  - hash:
-      serializedVersion: 2
       Hash: c1933cc0a2f4ff6eb13333347497beb3
     assemblyName: Unity.Timeline.dll
     namespaceName: UnityEngine.Timeline
@@ -930,7 +927,13 @@ ScriptsOnlyBuild:
     assemblyName: Unity.Timeline.dll
     namespaceName: UnityEngine.Timeline
     className: PlayableTrack
+  - hash:
+      serializedVersion: 2
+      Hash: 82e45055aaec29ca261be2e16d590bbd
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: 
+    className: FishMachine
   platform: 19
   scenePathNames:
   - Assets/Scenes/Fish Scene.unity
-  playerPath: C:/Users/pirl/Desktop/Winsor-McKoi/Build/Winsor-McKoi.exe
+  playerPath: C:/Users/mmccu/Documents/GitHub/ATEC-Winsor/Unity_Application/Winsor-McKoi.exe

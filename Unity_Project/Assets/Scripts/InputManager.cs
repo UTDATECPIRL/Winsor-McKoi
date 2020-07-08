@@ -59,6 +59,12 @@ public class InputManager : MonoBehaviour
                 fishMachine.Interact(pair.Value);
             }
         }
+
+        //If someone hits escape, then close the app
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            Application.Quit();
+        }
     }
 
     void OnFeedFish(OscMessage message)

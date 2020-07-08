@@ -18,8 +18,8 @@ Clone this repository or download the zip.
 https://github.com/UTDATECPIRL/Winsor-McKoi.git
 ```
 #### Unity Component
-The UI for the installation is built in Unity. The leap motion package for unity is used to extract the hand tracking data from the leap motion controller. 
-* Install [Unity](https://store.unity.com/#plans-individual)
+The UI for this installation is built in Unity. Alembic animations of Winsor react to input from the Leap software, as well as from the ML and Presence Detection components. Winsor is made more "alive" with systems to track happiness, fullness, and his tank's dirtiness. 
+* Install [Unity version 2019.3.9f1](https://store.unity.com/#plans-individual)
 * Install [Leap Motion for Unity](https://developer.leapmotion.com/unity#5436356) 
 
 #### Machine Learning Component

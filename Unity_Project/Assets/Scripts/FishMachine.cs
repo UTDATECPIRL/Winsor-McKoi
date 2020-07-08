@@ -17,16 +17,19 @@ public class FishMachine : MonoBehaviour
     /// </summary>
     [Range(0.0f, 1.0f)]
     public float happyThreshold;
+
     /// <summary>
     /// The fullness level below which the fish will be considered starving. Should be less than fullThreshold
     /// </summary>
     [Range(0.0f, 1.0f)]
     public float starvingThreshold;
+
     /// <summary>
     /// The fullness level past which the fish will be considered full. Should be between starvingThreshold and overfullThreshold
     /// </summary>
     [Range(0.0f, 1.0f)]
     public float fullThreshold;
+
     /// <summary>
     /// The fullness level past which the fish will be considered overfed. Should be greater than fullThreshold
     /// </summary>
@@ -249,7 +252,7 @@ public class FishMachine : MonoBehaviour
 
             new Transition(State.FEEDING, State.HAPPY, Interaction.TIME, 8.0f, FishCondition.STARVING),
             new Transition(State.FEEDING, State.HAPPY, Interaction.TIME, 8.0f, FishCondition.HUNGRY),
-            new Transition(State.FEEDING, State.SAD, Interaction.TIME, 8.0f, FishCondition.FULL),
+            new Transition(State.FEEDING, State.HAPPY, Interaction.TIME, 8.0f, FishCondition.FULL),
             new Transition(State.FEEDING, State.SAD, Interaction.TIME, 8.0f, FishCondition.OVERFULL),
             new Transition(State.FEEDING, State.SHY, Interaction.POINTING, condition: FishCondition.SAD),
             new Transition(State.FEEDING, State.IDLE2CURIOUS, Interaction.POINTING, condition: FishCondition.HAPPY),
@@ -322,6 +325,7 @@ public class FishMachine : MonoBehaviour
         if (dirtiness < 1.0f && Time.time - dirtTimer >= 60.0f * dirtTime / 10.0f)
         {
             dirtiness += 0.1f;
+            dirtTimer = Time.time; 
         }
 
         //If the feeding timer passes the end of the feeding window, close the feeding window
@@ -333,8 +337,8 @@ public class FishMachine : MonoBehaviour
 
         if (Time.time - pointingTimer > pointingWindow)
         {
-            feedingTimer = float.MaxValue;
-            feedingIncrement = 0.0f;
+            pointingTimer = float.MaxValue;
+            pointingIncrement = 0.0f;
         }
 
         //Loop through all transitions FROM this state and check whether we should transition
@@ -384,7 +388,8 @@ public class FishMachine : MonoBehaviour
                     }
                     else if (interaction == Interaction.WAVE)
                     {
-                        dirtiness -= 0.2f;
+                        //This ternary keeps dirtiness from going negative. If dirtiness <= 0.2, just make it 0
+                        dirtiness -= dirtiness >= 0.2f ? 0.2f : dirtiness;
                     }
                 }
             }
@@ -421,7 +426,7 @@ public class FishMachine : MonoBehaviour
         UpdateFishCondition(to);
     }
 
-    /* TODO: maybe put UpdateFishCondition inside ChangeState, since that is the only place it will likely ever be called*/
+    /* TODO: maybe put UpdateFishCondition inside ChangeState, since that is the only place it will likely ever be called */
     /// <summary>
     /// UpdateFishCondition takes one parameter - the state we are changing to. This function will update the 
     /// fish's stats accordingly.
@@ -469,7 +474,7 @@ public class FishMachine : MonoBehaviour
                 {
                     //Just do the stat changes
                     happiness += pointingIncrement;
-                    fullness -= 0.1f;
+                    fullness -= 0.05f;
                 }
                 
                 break;
@@ -477,8 +482,9 @@ public class FishMachine : MonoBehaviour
             case State.DYING:
                 happiness = initialHappiness;
                 fullness = initialFullness;
-                decayTimer = float.MaxValue; //This is a shifty(?) workaround to get the fish to hibernate; its 
-                                             //stats wont tick down while this is set
+                decayTimer = float.MaxValue; //decayTimer is set to its max value so that the timer does not
+                                             //tick while the fish is unfolded
+                                             
                 break;
           //
             case State.OPENING:

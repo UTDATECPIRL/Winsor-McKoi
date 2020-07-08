@@ -62,6 +62,16 @@ public class FishGuiScript : MonoBehaviour
             //Disable the current animation object
             playingAnimation.SetActive(false);
 
+            //Since the opening animation is too fast, slow it down
+            if(fishMachine.CurrentState == FishMachine.State.OPENING)
+            {
+                videoPlayer.playbackSpeed = 0.5f;
+            }
+            else
+            {
+                videoPlayer.playbackSpeed = 1.0f;
+            }
+
             //Pick the new animation, activate it, then play it
             playingAnimation = animations[(int)fishMachine.CurrentState];
             playingAnimation.SetActive(true);
