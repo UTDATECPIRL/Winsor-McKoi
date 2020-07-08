@@ -18,7 +18,7 @@ https://github.com/UTDATECPIRL/Winsor-McKoi.git
 The UI for this installation is built in Unity. Alembic animations of Winsor react to input from the Leap software, as well as from the ML and Presence Detection components. Winsor is made more "alive" with systems to track happiness, fullness, and his tank's dirtiness. 
 * Install [Unity version 2019.3.9f1](https://store.unity.com/#plans-individual)
 * Install [Leap Motion for Unity](https://developer.leapmotion.com/unity#5436356) 
-* (If recieving compiler errors related to Alembic, install [Alembic for Unity](https://docs.unity3d.com/Packages/com.unity.formats.alembic@1.0/manual/index.html))
+* (Compiler errors may occur with Alembic in the Unity Inspector. If this occurs, install [Alembic for Unity](https://docs.unity3d.com/Packages/com.unity.formats.alembic@1.0/manual/index.html))
 
 #### Machine Learning Component
 The ML model takes the finger coordinates from the leap motion controller as input. A DTW algorithm is used to perform time series analysis on the incoming temporal sequence. The similarity percentage thus obtained is used to decide which gesture is being performed by the user in real time.   
