@@ -1,13 +1,10 @@
 # Winsor McKoi 
-
 Winsor McKoi Interactive Fish Project is an experiment in delight and engagement. Using Leap Motion Controller and Ultrasonic Sensor as well as a Looking Glass holographic display, the window-front installation presents an animated origami fish, named Winsor McKoi. The virtual fish responds in real-time to physical presence and gestures (e.g., sprinkle, wave, and point) as well as tweets in order to cultivate a community of participants who actively engage in maintaining the “life” of the virtual fish over time. In doing so, Winsor McKoi Interactive Fish Project imagines that post-COVID-19 interfaces might be “touching” in ways that do not require fingers.
 
 ## Getting Started
-
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. 
 
 ### Prerequisites 
-
 * Windows 10 or macOS(The COM port in the Presence GameObject would need to be modified accordingly)
 * [Leap Motion Controller](https://www.ultraleap.com/product/leap-motion-controller/)
 * Arduino Uno and HR-SC04 Ultrasonic Sensor
@@ -23,7 +20,7 @@ The UI for this installation is built in Unity. Alembic animations of Winsor rea
 * Install [Leap Motion for Unity](https://developer.leapmotion.com/unity#5436356) 
 
 #### Machine Learning Component
-The Ml model takes the finger coordinates from the leap motion controller as input. A DTW algorithm is used to perform time series analysis on the incoming temporal sequence. The similarity percentage thus obtained is used to decide which gesture is being performed by the user in real time.   
+The ML model takes the finger coordinates from the leap motion controller as input. A DTW algorithm is used to perform time series analysis on the incoming temporal sequence. The similarity percentage thus obtained is used to decide which gesture is being performed by the user in real time.   
 * Install [Wekinator](http://www.wekinator.org/downloads/)
 
 #### Presence Detection Component:
@@ -35,11 +32,11 @@ We are using an Arduino Uno with an ultrasonic sensor to detect physical presenc
 * Open the Fish Scene in the Unity Project from the folder (Winsor-McKoi/Unity_Project) and change the COM port in the Presence GameObject to the port selected in the Arduino IDE. 
 
 ## Running the application
-
 * Open the .wekproj file in the folder (Winsor-McKoi/ML_Component) from within the wekinator application and click run.
 * Run the Unity application in the folder (Winsor-McKoi/Build). Follow the guide below to explore the fish's behaviours. 
 
 ### Demo Guide:
+The project launches in the standing paper mode and then waits for presence to be detected by the ultrasonic sensor. Once presence is detected it allows the user to interact with the remaining gestures. If you are running the demo without the arduino set up use the keyboard key "T" to get past the presence detection stage and move on to hand gesture recognition. 
 
 **Input 1 (Keyboard Keys)** | **Input 2 (Gestures)** | **Action**
 ------------ | ------------- | ------------ 
@@ -48,9 +45,7 @@ We are using an Arduino Uno with an ultrasonic sensor to detect physical presenc
  S | Sprinkle Food | Go up to feed
  P | Point finger | Shy or curious behavior (Happiness dependant)
 
-
 ## Built With
-
 * [Leap Motion](https://developer.leapmotion.com/unity) - Hand Recognition
 * [Wekinator](http://www.wekinator.org/) - Machine Learning Component
 * [Unity](https://unity.com/) - UI component
@@ -59,11 +54,19 @@ We are using an Arduino Uno with an ultrasonic sensor to detect physical presenc
 
 ## Contributors and Authors
 
-* **Heidi Cooley**
+### Project Team
+* **Heidi Rae Cooley**
 * **Dale MacDonald** - [mrdale1958](https://github.com/mrdale1958?tab=repositories)
-* **Mason McCully** - [Nosam55](https://github.com/Nosam55)
 * **Danai Bavishi** - [danaibavishi](https://github.com/danaibavishi)
+* **Mason McCully** - [Nosam55](https://github.com/Nosam55)
+* **Taylor Lawson**
+* **Sean Landers**
+
+### Animations Team
+* **Christine Veras**
+* **Samuel Price**
+* **Julio Soto** - juliocsoto.com
+
 
 ## License
-
 This project is licensed under the CC License - see the [LICENSE.md](LICENSE.md) file for details
