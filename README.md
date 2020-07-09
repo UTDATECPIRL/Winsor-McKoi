@@ -66,7 +66,7 @@ The project launches in the standing paper mode and then waits for presence to b
 ### Animations Team
 * **Christine Veras**
 * **Samuel Price**
-* **Julio Soto** - juliocsoto.com
+* **Julio Soto** - [juliocsoto](https://juliocsoto.com/)
 
 
 ## License
