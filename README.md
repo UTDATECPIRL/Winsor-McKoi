@@ -37,7 +37,7 @@ We are using an Arduino Uno with an ultrasonic sensor to detect physical presenc
 * Run the Unity application in the folder (Winsor-McKoi/Unity_Application). Follow the guide below to explore the fish's behaviours. 
 
 ### Demo Guide:
-The project launches in the standing paper mode and then waits for presence to be detected by the ultrasonic sensor. Once presence is detected it allows the user to interact with the remaining gestures. If you are running the demo without the arduino set up use the keyboard key "T" to get past the presence detection stage and move on to hand gesture recognition. 
+The project launches in the standing paper mode and then waits for presence to be detected by the ultrasonic sensor. Once presence is detected it allows the user to interact with the remaining gestures. If you are running the demo without the arduino set up, press the keyboard key "T" to get past the presence detection stage and move on to hand gesture recognition. 
 
 **Input 1 (Keyboard Keys)** | **Input 2 (Gestures)** | **Action**
 ------------ | ------------- | ------------ 
