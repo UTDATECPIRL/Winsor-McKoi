@@ -61,7 +61,7 @@ The project launches in the standing paper mode and then waits for presence to b
 * **Danai Bavishi** - [danaibavishi](https://github.com/danaibavishi)
 * **Mason McCully** - [Nosam55](https://github.com/Nosam55)
 * **Taylor Lawson**
-* **Sean Landers**
+* **Sean Landers** - [seanlanders](https://github.com/seanlanders)
 
 ### Animations Team
 * **Christine Veras**
