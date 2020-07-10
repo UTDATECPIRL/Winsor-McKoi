@@ -70,4 +70,4 @@ The project launches in the standing paper mode and then waits for presence to b
 
 
 ## License
-This project is licensed under the Apache License 2.0 license - see the [LICENSE.md](LICENSE.md) file for details
+This project is licensed under the Apache License 2.0 - see the [LICENSE.md](LICENSE.md) file for details
