@@ -11,6 +11,8 @@ public class InputManager : MonoBehaviour
     private OSC twitterOsc;
     [SerializeField]
     private OSC leapOsc;
+/*    [SerializeField]
+    private LEAP_coordinates leapMotionController; */ 
 
     /* MEMBER VARIABLES */
     private readonly Dictionary<KeyCode, FishMachine.Interaction> controls;

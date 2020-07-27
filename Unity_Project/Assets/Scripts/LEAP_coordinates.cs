@@ -15,6 +15,8 @@ public class LEAP_coordinates : MonoBehaviour
     private FingerModel finger;
     public OSC osc;
 
+    public bool HandDetected { get; private set; }
+
     void Start()
     {
         HandModel hand_model = GetComponent<DanaiHandModel>();
@@ -30,6 +32,8 @@ public class LEAP_coordinates : MonoBehaviour
         var hand = Hands.Get(Chirality.Right);
         if (hand != null)
         {
+            HandDetected = true; //We successfully found a right hand
+
             var indexPosition = hand.Fingers[1].TipPosition;
             var middlePosition = hand.Fingers[2].TipPosition;
             var ringPosition = hand.Fingers[3].TipPosition;
@@ -77,6 +81,10 @@ public class LEAP_coordinates : MonoBehaviour
                 message.values.Add(fingertips[i]);
             }
             osc.Send(message);
+        }
+        else
+        {
+            HandDetected = false; //If hand == null, no right hands were detected by the leap
         }
     }
 }

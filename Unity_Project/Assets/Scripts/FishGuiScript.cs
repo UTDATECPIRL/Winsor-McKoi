@@ -15,6 +15,17 @@ public class FishGuiScript : MonoBehaviour
     [SerializeField]
     private GameObject[] animations;
     [SerializeField]
+    private Material fishMaterial;
+    [SerializeField]
+    private Material glowingMaterial;
+
+    [SerializeField]
+    [Range(0.0f, 1.0f)]
+    [Tooltip("The playback speed for the fish's folding-up animation")]
+    private float foldupSpeed;
+
+    [SerializeField]
+    private LEAP_coordinates leapMotionController;
 
     /* MEMBER VARIABLES */
     private VideoPlayer videoPlayer;
@@ -22,7 +33,7 @@ public class FishGuiScript : MonoBehaviour
     private Queue<FishMachine.State> stateQueue;
     private GameObject playingAnimation;
     private bool justSwitched;
-    private RawImage dirtImage;
+    private RawImage[] dirtImages;
 
     // Start is called before the first frame update
     void Start()
@@ -31,15 +42,20 @@ public class FishGuiScript : MonoBehaviour
         stateQueue = new Queue<FishMachine.State>();
         currState = fishMachine.CurrentState;
         justSwitched = false;
-
-        dirtImage = GetComponentInChildren<RawImage>();
-        
+ 
         foreach (GameObject obj in animations)
             obj.SetActive(false);
 
         animations[0].SetActive(true);
         animations[0].GetComponent<PlayableDirector>().Play();
         playingAnimation = animations[0];
+
+        dirtImages = GetComponentsInChildren<RawImage>();
+
+        if (dirtImages == null)
+        {
+            throw new UnityException("No dirt images specified in FishGui!");
+        }
 
         if (fishMachine == null)
         {
@@ -65,7 +81,7 @@ public class FishGuiScript : MonoBehaviour
             //Since the opening animation is too fast, slow it down
             if(fishMachine.CurrentState == FishMachine.State.OPENING)
             {
-                videoPlayer.playbackSpeed = 0.5f;
+                videoPlayer.playbackSpeed = foldupSpeed;
             }
             else
             {
@@ -81,7 +97,22 @@ public class FishGuiScript : MonoBehaviour
             currState = fishMachine.CurrentState;
         }
 
-        dirtImage.color = new Color(dirtImage.color.r, dirtImage.color.g, dirtImage.color.b, fishMachine.dirtiness * 0.3f);
+        //Tie the dirt image's opacity to the tank's dirtiness
+        foreach(RawImage img in dirtImages)
+        {
+            Color c = img.color;
+            img.color = new Color(c.r, c.g, c.b, fishMachine.dirtiness * 0.4f);
+        }
+
+        if (leapMotionController.HandDetected)
+        {
+            playingAnimation.GetComponent<Renderer>().material = glowingMaterial;
+        }
+        else
+        {
+            playingAnimation.GetComponent<Renderer>().material = fishMaterial;
+        }
+        
     }
 
     void OnGUI()
@@ -90,24 +121,14 @@ public class FishGuiScript : MonoBehaviour
         GUILayout.Label($"Current State: {fishMachine.CurrentState}");
         GUILayout.Label($"Happiness    : {fishMachine.happiness * 100.0f}%");
         GUILayout.Label($"Fullness     : {fishMachine.fullness * 100.0f}%");
-        GUILayout.Label($"Dirtiness     : {fishMachine.dirtiness * 100.0f}%");
+        GUILayout.Label($"Dirtiness    : {fishMachine.dirtiness * 100.0f}%");
         GUILayout.Label($"Condition    : {fishMachine.CurrentCondition}");
+        GUILayout.Label($"Hand Detected: {leapMotionController.HandDetected}");
 
         foreach(FishMachine.State state in stateQueue.ToArray())
         {
             GUILayout.Label($"State Queue  : {state}");
         }
         
-    }
-
-    void drawDirt()
-    {
-        Color old = GUI.color;
-        GUI.color = new Color(0.0f, 0.0f, 0.0f, fishMachine.dirtiness);
-
-        Rect dirt = new Rect(0, 0, Screen.width, Screen.height);
-        GUI.Box(dirt, "dirt");
-
-        GUI.color = old;
     }
 }

@@ -1,5 +1,5 @@
 sceneSetups:
-- path: Assets/Scenes/Fish Scene.unity
+- path: Assets/Scenes/Training Scene.unity
   isLoaded: 1
   isActive: 1
   isSubScene: 0
