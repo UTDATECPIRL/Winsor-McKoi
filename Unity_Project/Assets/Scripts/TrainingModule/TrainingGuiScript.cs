@@ -27,10 +27,6 @@ public class TrainingGuiScript : MonoBehaviour
         triangle = GameObject.Find("Triangle").GetComponent<RawImage>();
 
         promptText = GetComponentInChildren<Text>();
-
-     //   circle.SetActive(false);
-     //   square.SetActive(false);
-     //   triangle.SetActive(false);
         promptText.text = "Welcome!";
 
         //They all start at max (i.e. not running)
@@ -40,75 +36,56 @@ public class TrainingGuiScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Material material;
-        float now = Time.time;
+        Fade(promptText, textTimer);
+        Fade(circle, cTimer);
+        Fade(square, sTimer);
+        Fade(triangle, tTimer);
+    }
 
-        if (now - textTimer <= textFadeTime)
+    private void Fade(RawImage obj, float timer)
+    {
+        if (Time.time - timer <= shapeFadeTime)
         {
-            float a = 1f - (now - textTimer) / textFadeTime;
-            promptText.color = new Color(promptText.color.r, promptText.color.g, promptText.color.b, a);
+            float a = 1f - (Time.time - timer) / shapeFadeTime;
+            obj.color = new Color(obj.color.r, obj.color.g, obj.color.b, a);
         }
-        else if(promptText.color.a != 0)
+        else if (obj.color.a != 0)
         {
-            Color c = promptText.color;
+            Color c = obj.color;
             c.a = 0;
-            promptText.color = c;
+            obj.color = c;
         }
+    }
 
-        if (now - cTimer <= shapeFadeTime)
+    private void Fade(Text obj, float timer)
+    {
+        if (Time.time - timer <= textFadeTime)
         {
-            float a = 1f - (now - cTimer) / shapeFadeTime;
-            circle.color = new Color(circle.color.r, circle.color.g, circle.color.b, a);
+            float a = 1f - (Time.time - timer) / textFadeTime;
+            obj.color = new Color(obj.color.r, obj.color.g, obj.color.b, a);
         }
-        else if (circle.color.a != 0)
+        else if (obj.color.a != 0)
         {
-            Color c = circle.color;
+            Color c = obj.color;
             c.a = 0;
-            circle.color = c;
+            obj.color = c;
         }
-
-        if (now - sTimer <= shapeFadeTime)
-        {
-            float a = 1f - (now - sTimer) / shapeFadeTime;
-            square.color = new Color(square.color.r, square.color.g, square.color.b, a);
-        }
-        else if (square.color.a != 0)
-        {
-            Color c = square.color;
-            c.a = 0;
-            square.color = c;
-        }
-
-        if (now - tTimer <= shapeFadeTime)
-        {
-            float a = 1f - (now - tTimer) / shapeFadeTime;
-            triangle.color = new Color(triangle.color.r, triangle.color.g, triangle.color.b, a);
-        }
-        else if (triangle.color.a != 0)
-        {
-            Color c = triangle.color;
-            c.a = 0;
-            triangle.color = c;
-        }
-
     }
 
     public void Interact(FishMachine.Interaction interaction)
     {
         switch (interaction)
         {
+            //We do 'textTimer = xTimer = Time.time' because both timers start at the same time
             case FishMachine.Interaction.POINTING:
-                //                circle.SetActive(!circle.activeInHierarchy);
                 textTimer = cTimer = Time.time;
                 promptText.text = "Point";
                 break;
             case FishMachine.Interaction.SPRINKLING:
-                //                square.SetActive(!square.activeInHierarchy);
                 textTimer = sTimer = Time.time;
                 promptText.text = "Sprinkle";
                 break;
             case FishMachine.Interaction.WAVE:
-                //                triangle.SetActive(!triangle.activeInHierarchy);
                 textTimer = tTimer = Time.time;
                 promptText.text = "Wave";
                 break;

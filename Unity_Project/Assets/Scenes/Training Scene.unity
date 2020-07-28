@@ -1115,8 +1115,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 82aed134dbeb4324f9315d1ebd401a56, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  shapeFadeTime: 1.5
-  textFadeTime: 2
+  shapeFadeTime: 1
+  textFadeTime: 1.25
 --- !u!4 &376416091
 Transform:
   m_ObjectHideFlags: 0
