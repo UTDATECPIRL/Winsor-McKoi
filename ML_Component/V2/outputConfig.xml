@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<OSCOutputGroup>
+  <oscMessage>/wek/outputs</oscMessage>
+  <hostName>localhost</hostName>
+  <outputPort>12000</outputPort>
+  <outputs class="linked-list">
+    <wekimini.osc.OSCDtwOutput>
+      <name>output</name>
+      <numGestures>3</numGestures>
+      <gestureNames>
+        <string>Sprinkle_food</string>
+        <string>Cleaning_wave</string>
+        <string>Finger_point</string>
+      </gestureNames>
+      <gestureOscMessages>
+        <string>/Sprinkle_food</string>
+        <string>/Cleaning_wave</string>
+        <string>/Finger_point</string>
+      </gestureOscMessages>
+      <outputOscMessage>output</outputOscMessage>
+    </wekimini.osc.OSCDtwOutput>
+  </outputs>
+</OSCOutputGroup>
